@@ -339,6 +339,6 @@ function startEmulator(parentConfig) {
   addCustomAsyncInit(Module);
 
   if (parentConfig.singleThreadedEmscripten) {
-    importScripts((parentConfig.baseURL || '') + 'BasiliskII.js');
+    importScripts('BasiliskII.js');
   }
 }
