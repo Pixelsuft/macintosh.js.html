@@ -382,7 +382,7 @@ var workerConfig = Object.assign(
 );
 
 if (basiliskConfig.singleThreadedEmscripten) {
-  var worker = new Worker(basiliskConfig.baseURL + 'BasiliskII-worker-boot.js');
+  var worker = new Worker('BasiliskII-worker-boot.js');
 
   worker.postMessage(workerConfig);
   worker.onmessage = function (e) {
