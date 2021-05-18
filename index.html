@@ -1,53 +1,33 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Emscripten-Generated Code</title>
-    <style>
-      body {
-        font-family: arial;
-        margin: 0;
-        padding: none;
-      }
+<html lang="en">
 
-      .emscripten {
-        padding-right: 0;
-        margin-left: auto;
-        margin-right: auto;
-        display: block;
-      }
-      div.emscripten {
-        text-align: center;
-      }
-      div.emscripten_border {
-        border: 1px solid black;
-      }
-      /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
-      canvas.emscripten {
-        border: 0px none;
-        background-color: black;
-        cursor: none;
-      }
-    </style>
-  </head>
-  <body>
-    <canvas
-      width="800"
-      height="600"
-      class="emscripten"
-      id="canvas"
-      oncontextmenu="event.preventDefault()"
-    ></canvas>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>macintosh.js.html</title>
+  <link rel="shortcut icon" type="image/ico" href="favicon.ico">
+  <style>
+    input[type="button"]:hover {
+      background-color: red;
+    }
 
-    <script type="text/javascript">
-      window.basiliskConfig = {
-        singleThreadedEmscripten: true,
-        baseURL: '/',
-        autoloadFiles: ['MacOS753', 'DCImage.img', 'Quadra-650.rom', 'prefs'],
-        arguments: ['--config', 'prefs'],
-      };
-    </script>
-    <script src="BasiliskII-worker-ui-thread.js"></script>
-  </body>
+    input[type="button"] {
+      width: calc(100% - 40px);
+      margin: 20px;
+      height: 40px;
+      font-family: Segoue UI-MONOSPACE;
+      font-size: 22px;
+      border: 1px solid blue;
+      border-radius: 20px;
+      transition: 0.5s all;
+    }
+  </style>
+</head>
+
+<body>
+  <input type="button" value="Fast run" onclick="location.href='index-worker.html'">
+  <input type="button" value="Slow run" onclick="location.href='index-mainthread.html'">
+</body>
+
 </html>

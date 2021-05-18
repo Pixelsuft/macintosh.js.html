@@ -96,12 +96,14 @@ var LockStates = {
 
 var Module = null;
 
+
 self.onmessage = function (msg) {
   console.log('init worker');
   startEmulator(Object.assign({}, msg.data, {singleThreadedEmscripten: true}));
 };
 
 function startEmulator(parentConfig) {
+  console.log(parentConfig);
   var screenBufferView = new Uint8Array(
     parentConfig.screenBuffer,
     0,

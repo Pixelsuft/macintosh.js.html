@@ -1,12 +1,11 @@
-disk MacOS753
-disk DCImage.img
+disk disk
 extfs /
 screen win/800/600
 seriala 
 serialb 
 udptunnel false
 udpport 6066
-rom Quadra-650.rom
+rom rom
 bootdrive 0
 bootdriver 0
 ramsize 268435456

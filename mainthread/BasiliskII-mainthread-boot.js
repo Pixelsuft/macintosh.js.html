@@ -12,6 +12,7 @@ function pathGetFilename(path) {
     return path;
   }
 }
+
 function addAutoloader(module) {
   var loadDatafiles = function() {
     module.autoloadFiles.forEach(function(filepath) {
@@ -68,11 +69,18 @@ var Module = {
       //text = text.replace(/</g, "&lt;");
       //text = text.replace(/>/g, "&gt;");
       //text = text.replace('\n', '<br>', 'g');
-      console.log(text);
-      if (element) {
-        element.value += text + '\n';
-        element.scrollTop = element.scrollHeight; // focus on bottom
-      }
+      if (text == 'Starting emulation') {
+        setTimeout(function() {
+          const lscreen = document.getElementById('load_screen');
+          lscreen.style.opacity = "0";
+          setTimeout(function() {
+            lscreen.style.display = "none";
+          }, 500);
+        }, 1500);
+      } else if (text == 'close_audio') {
+        location.href = '';
+      } else
+        console.log(text);
     };
   })(),
   printErr: function(text) {
@@ -104,36 +112,29 @@ var Module = {
   })(),
   setStatus: function(text) {
     if (!Module.setStatus.last)
-      Module.setStatus.last = {time: Date.now(), text: ''};
+      Module.setStatus.last = {
+        time: Date.now(),
+        text: ''
+      };
     if (text === Module.setStatus.text) return;
     var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
     var now = Date.now();
     if (m && now - Date.now() < 30) return; // if this is a progress update, skip it if too soon
     if (m) {
       text = m[1];
-      progressElement.value = parseInt(m[2]) * 100;
-      progressElement.max = parseInt(m[4]) * 100;
-      progressElement.hidden = false;
-      spinnerElement.hidden = false;
-    } else {
-      progressElement.value = null;
-      progressElement.max = null;
-      progressElement.hidden = true;
-      if (!text) spinnerElement.style.display = 'none';
-    }
-    statusElement.innerHTML = text;
+    } else {}
   },
   totalDependencies: 0,
   monitorRunDependencies: function(left) {
     this.totalDependencies = Math.max(this.totalDependencies, left);
     Module.setStatus(
-      left
-        ? 'Preparing... (' +
-            (this.totalDependencies - left) +
-            '/' +
-            this.totalDependencies +
-            ')'
-        : 'All downloads complete.'
+      left ?
+      'Preparing... (' +
+      (this.totalDependencies - left) +
+      '/' +
+      this.totalDependencies +
+      ')' :
+      'All downloads complete.'
     );
   },
 };
@@ -144,7 +145,6 @@ Module.setStatus('Downloading...');
 window.onerror = function(event) {
   // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
   Module.setStatus('Exception thrown, see JavaScript console');
-  spinnerElement.style.display = 'none';
   Module.setStatus = function(text) {
     if (text) Module.printErr('[post-exception status] ' + text);
   };

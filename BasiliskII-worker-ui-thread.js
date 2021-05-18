@@ -21,9 +21,9 @@ var audio = {
 
 var audioTotalSamples = audio.samples * audio.channels;
 audio.bytesPerSample =
-  audio.format == 0x0008 /*AUDIO_U8*/ || audio.format == 0x8008 /*AUDIO_S8*/
-    ? 1
-    : 2;
+  audio.format == 0x0008 /*AUDIO_U8*/ || audio.format == 0x8008 /*AUDIO_S8*/ ?
+  1 :
+  2;
 audio.bufferSize = audioTotalSamples * audio.bytesPerSample;
 audio.bufferDurationSecs =
   audio.bufferSize / audio.bytesPerSample / audio.channels / audio.freq; // Duration of a single queued buffer in seconds.
@@ -89,18 +89,19 @@ gainNode.gain.value = 1;
 gainNode.connect(audioContext.destination);
 
 function addEventListenerOnce(element, eventType, cb) {
-  element.addEventListener(eventType, function () {
+  element.addEventListener(eventType, function() {
     element.removeEventListener(eventType, cb);
     cb.apply(this, arguments);
   });
 }
 
-addEventListenerOnce(canvas, 'click', function () {
+addEventListenerOnce(canvas, 'click', function() {
   audioContext.resume();
 });
 
 var warningLastTime = {};
 var warningCount = {};
+
 function throttledWarning(message, type = '') {
   warningCount[type] = (warningCount[type] || 0) + 1;
   if (Date.now() - (warningLastTime[type] || 0) > 5000) {
@@ -224,7 +225,7 @@ function openAudio() {
       if (
         secsUntilNextPlayStart >=
         audio.bufferingDelay +
-          audio.bufferDurationSecs * audio.numSimultaneouslyQueuedBuffers
+        audio.bufferDurationSecs * audio.numSimultaneouslyQueuedBuffers
       )
         return;
 
@@ -292,6 +293,7 @@ function releaseLock(bufferView, lockIndex) {
 function releaseInputLock() {
   releaseLock(inputBufferView, InputBufferAddresses.globalLockAddr);
 }
+
 function tryToSendInput() {
   if (!acquireLock(inputBufferView, InputBufferAddresses.globalLockAddr)) {
     return;
@@ -347,24 +349,37 @@ function tryToSendInput() {
   releaseInputLock();
   inputQueue = remainingKeyEvents;
 }
-canvas.addEventListener('mousemove', function (event) {
-  inputQueue.push({type: 'mousemove', dx: event.offsetX, dy: event.offsetY});
+canvas.addEventListener('mousemove', function(event) {
+  inputQueue.push({
+    type: 'mousemove',
+    dx: event.offsetX,
+    dy: event.offsetY
+  });
 });
-canvas.addEventListener('mousedown', function (event) {
-  inputQueue.push({type: 'mousedown'});
+canvas.addEventListener('mousedown', function(event) {
+  inputQueue.push({
+    type: 'mousedown'
+  });
 });
-canvas.addEventListener('mouseup', function (event) {
-  inputQueue.push({type: 'mouseup'});
+canvas.addEventListener('mouseup', function(event) {
+  inputQueue.push({
+    type: 'mouseup'
+  });
 });
-window.addEventListener('keydown', function (event) {
-  inputQueue.push({type: 'keydown', keyCode: event.keyCode});
+window.addEventListener('keydown', function(event) {
+  inputQueue.push({
+    type: 'keydown',
+    keyCode: event.keyCode
+  });
 });
-window.addEventListener('keyup', function (event) {
-  inputQueue.push({type: 'keyup', keyCode: event.keyCode});
+window.addEventListener('keyup', function(event) {
+  inputQueue.push({
+    type: 'keyup',
+    keyCode: event.keyCode
+  });
 });
 
-var workerConfig = Object.assign(
-  {
+var workerConfig = Object.assign({
     inputBuffer: inputBuffer,
     inputBufferSize: INPUT_BUFFER_SIZE,
     screenBuffer: screenBuffer,
@@ -376,7 +391,7 @@ var workerConfig = Object.assign(
     audioBlockBufferSize: audio.bufferSize,
     audioBlockChunkSize: audioBlockChunkSize,
     SCREEN_WIDTH: SCREEN_WIDTH,
-    SCREEN_HEIGHT: SCREEN_HEIGHT,
+    SCREEN_HEIGHT: SCREEN_HEIGHT
   },
   basiliskConfig
 );
@@ -385,7 +400,7 @@ if (basiliskConfig.singleThreadedEmscripten) {
   var worker = new Worker('BasiliskII-worker-boot.js');
 
   worker.postMessage(workerConfig);
-  worker.onmessage = function (e) {
+  worker.onmessage = function(e) {
     if (
       e.data.type === 'emulator_ready' ||
       e.data.type === 'emulator_loading'
@@ -406,6 +421,18 @@ if (basiliskConfig.singleThreadedEmscripten) {
           progressElement.hidden = true;
         }
       }
+    } else if (e.data.type == 'emulator_close') {
+      location.href = 'index.html';
+    } else if (e.data.type == 'emulator_open') {
+      setTimeout(function() {
+        const lscreen = document.getElementById('load_screen');
+        lscreen.style.opacity = "0";
+        setTimeout(function() {
+          lscreen.style.display = "none";
+        }, 500);
+      }, 1500);
+    } else if (e.data.type == 'emulator_resolution_bug') {
+      alert('Nope. Now Enjoy this shit :)');
     }
   };
 }
@@ -446,12 +473,13 @@ function asyncLoop() {
 openAudio();
 asyncLoop();
 
-if (!basiliskConfig.singleThreadedEmscripten) {
+//if (!basiliskConfig.singleThreadedEmscripten) {
+if (false) {
   document.write(
     '<script src="' +
-      basiliskConfig.baseURL +
-      'BasiliskII-worker-boot.js"></' +
-      'script>'
+    basiliskConfig.baseURL +
+    'BasiliskII-worker-boot.js"></' +
+    'script>'
   );
 
   startEmulator(workerConfig);
